@@ -1,0 +1,178 @@
+DATABASE MANAGEMENT
+AIM: Create database using SQLite and perform INSERT,SELECT,UPDATE
+AND DELETE
+XML CODE:
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="vertical"
+tools:context=".MainActivity">
+<TextView
+android:id="@+id/textView"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:text="TextView" />
+<EditText
+android:id="@+id/id"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:ems="10"
+android:inputType="textPersonName"
+android:hint="id" />
+<EditText
+android:id="@+id/name"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:ems="10"
+android:inputType="textPersonName"
+android:hint="name" />
+<EditText
+android:id="@+id/place"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:ems="10"
+android:inputType="textPersonName"
+android:hint="place" />
+<Button
+android:id="@+id/insert"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:text="insert" />
+<Button
+android:id="@+id/select"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:text="select" />
+<Button
+android:id="@+id/update"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:text="update" />
+<Button
+android:id="@+id/delete"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:text="delete" />
+<Button
+android:id="@+id/clear"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:text="clear" />
+</LinearLayout>
+JAVA CODE:
+package com.example.database_management;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+public class MainActivity extends AppCompatActivity {
+EditText id,name,place;
+Button insert,select,update,delete,clear;
+AlertDialog.Builder builder;
+SQLiteDatabase db;
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+setContentView(R.layout.activity_main);
+id = findViewById(R.id.id);
+name = findViewById(R.id.name);
+place = findViewById(R.id.place);
+insert = findViewById(R.id.insert);
+select = findViewById(R.id.select);
+update = findViewById(R.id.update);
+delete = findViewById(R.id.delete);
+clear = findViewById(R.id.clear);
+builder = new AlertDialog.Builder(this);
+try {
+db=openOrCreateDatabase("empdb",MODE_PRIVATE,null);
+db.execSQL("create table employee(id integer primary key,name
+Text,place Text)");
+Toast.makeText(getApplicationContext(),
+"table created successfully",Toast.LENGTH_SHORT).show();
+} catch (Exception e) {
+}
+insert.setOnClickListener(new View.OnClickListener() {
+@Override
+public void onClick(View view) {
+try {
+db.execSQL("insert into employee values("
++ id.getText().toString() + ",'" + name.getText().toString() +
+"','" + place.getText().toString() + "')");
+Toast.makeText(getApplicationContext(),
+"inserted successfully", Toast.LENGTH_SHORT).show();
+}
+catch(Exception e)
+{
+Toast.makeText(getApplicationContext(),
+"error", Toast.LENGTH_SHORT).show();
+}
+}
+});
+clear.callOnClick();
+select.setOnClickListener(new View.OnClickListener() {
+@Override
+public void onClick(View view) {
+Cursor c=db.rawQuery("select * from employee",null);
+if(c.getCount()==0)
+{
+Toast.makeText(getApplicationContext(),
+"no record", Toast.LENGTH_SHORT).show();
+}
+else
+{
+StringBuffer b=new StringBuffer();
+while(c.moveToNext())
+{
+b.append("id:"+c.getString(0)+"\n");
+b.append("name:"+c.getString(1)+"\n");
+b.append("place:"+c.getString(2)+"\n");
+Toast.makeText(getApplicationContext(),
+b.toString(), Toast.LENGTH_SHORT).show();
+builder.setMessage(b.toString());
+AlertDialog alert=builder.create();
+alert.setTitle("Employee data");
+alert.show();
+}
+}
+}
+});
+update.setOnClickListener(new View.OnClickListener() {
+@Override
+public void onClick(View view) {
+db.execSQL("update
+employee set
+name='"+name.getText().toString()+"',place='"+place.getText().t
+oString()+"' where id="+id.getText().toString()+"");
+Toast.makeText(getApplicationContext(),
+"updated....", Toast.LENGTH_SHORT).show();
+}
+});
+delete.setOnClickListener(new View.OnClickListener() {
+@Override
+public void onClick(View view) {
+db.execSQL("delete from employee where
+id="+id.getText().toString());
+Toast.makeText(getApplicationContext(),"ItemDeleted",
+Toast.LENGTH_SHORT).show();
+}
+});
+clear.setOnClickListener(new View.OnClickListener() {
+@Override
+public void onClick(View view) {
+id.setText("");
+name.setText("");
+place.setText("");
+}
+});
+clear.callOnClick();
+}
+}
