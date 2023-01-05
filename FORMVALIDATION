@@ -1,0 +1,242 @@
+FORM VALIDATION
+Aim: Implement validations on various UI controls.
+XML CODE:
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="vertical"
+tools:context=".MainActivity">
+<LinearLayout
+android:layout_width="match_parent"
+android:layout_height="60dp"
+android:layout_marginTop="10dp"
+android:orientation="horizontal">
+<EditText
+android:id="@+id/first"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_weight="1"
+android:ems="10"
+android:inputType="textPersonName"
+android:hint="First name" />
+<EditText
+android:id="@+id/last"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_weight="1"
+android:ems="10"
+android:inputType="textPersonName"
+android:hint="Last name" />
+</LinearLayout>
+<LinearLayout
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="vertical">
+<EditText
+android:id="@+id/email"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:ems="10"
+android:hint="Email"
+android:inputType="textEmailAddress" />
+<EditText
+android:id="@+id/password"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:ems="10"
+android:hint="Password"
+android:inputType="textPassword" />
+<LinearLayout
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:layout_marginTop="15dp"
+android:orientation="horizontal">
+<RadioGroup
+android:id="@+id/group"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:orientation="horizontal">
+<RadioButton
+android:id="@+id/male"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Male" />
+<RadioButton
+android:id="@+id/female"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="Female" />
+<RadioButton
+android:id="@+id/other"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_weight="1"
+android:text="Other" />
+</RadioGroup>
+</LinearLayout>
+<LinearLayout
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:layout_marginTop="15dp"
+android:orientation="horizontal">
+<EditText
+android:id="@+id/date"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_weight="1"
+android:hint="date"
+android:ems="10"
+android:inputType="date" />
+<Button
+android:id="@+id/datebutton"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_weight="1"
+android:text="select" />
+</LinearLayout>
+<LinearLayout
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:layout_marginTop="25dp"
+android:orientation="vertical">
+<CheckBox
+android:id="@+id/checkbox"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:text="I agree to the terms and conditions"/>
+</LinearLayout>
+<LinearLayout
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:orientation="vertical">
+<Button
+android:id="@+id/regbutton"
+android:layout_width="150dp"
+android:layout_gravity="center"
+android:layout_height="wrap_content"
+android:onClick="register"
+android:text="register" />
+</LinearLayout>
+</LinearLayout>
+</LinearLayout>
+JAVA CODE:
+package com.example.Registration;
+import androidx.appcompat.app.AppCompatActivity;
+import android.app.DatePickerDialog;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Toast;
+import java.util.Calendar;
+public class MainActivity extends AppCompatActivity {
+EditText first,last,dob,pass,email,datetext;
+RadioButton male,female,other;
+CheckBox c;
+RadioGroup g;
+Boolean val;
+public DatePickerDialog datepicker;
+Button pickdate;
+int day,month,year;
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+setContentView(R.layout.activity_main);
+first=findViewById(R.id.first);
+last=findViewById(R.id.last);
+email=findViewById(R.id.email);
+dob=findViewById(R.id.date);
+pass=findViewById(R.id.password);
+male=findViewById(R.id.male);
+female=findViewById(R.id.female);
+other=findViewById(R.id.other);
+g=findViewById(R.id.group);
+c=findViewById(R.id.checkbox);
+datetext=findViewById(R.id.date);
+pickdate=findViewById(R.id.datebutton);
+pickdate.setOnClickListener(new View.OnClickListener() {
+@Override
+public void onClick(View view) {
+Calendar calendar=Calendar.getInstance();
+day=calendar.get(Calendar.DAY_OF_MONTH);
+month=calendar.get(calendar.MONTH);
+year=calendar.get(Calendar.YEAR);
+datepicker=new DatePickerDialog(MainActivity.this,
+new DatePickerDialog.OnDateSetListener() {
+@Override
+public void onDateSet(DatePicker datePicker, int
+day, int month, int year) {
+datetext.setText(day+"/"+(month+1)+"/"+year);
+}
+},year,month,day);
+datepicker.show();
+}
+});
+}
+public void register(View view) {
+val=validate();
+if(val)
+{
+Toast.makeText(this, "Registered Successfull",
+Toast.LENGTH_SHORT).show();
+}
+}
+private boolean validate() {
+if(email.length() == 0) {
+email.setError("required");
+}
+else
+{
+String s_email=email.getText().toString();
+String checkmail=”[a-zA-Z0-9._-]+@[a-z].+[a-z]+”;
+if(!s_email.matches(checkmail)) {
+email.setError("Invalid email");
+return false;
+}
+}
+if(pass.length()==0)
+{
+pass.setError("Required");
+}
+else if(pass.length()<8) {
+pass.setError("password must be minimum 8 characters");
+}
+if(last.length()==0)
+{
+last.setError("Required");
+return false;
+}
+if(first.length()==0)
+{
+first.setError("Required");
+return false;
+
+}
+if(dob.length()==0)
+{
+dob.setError("Required");
+return false;
+}
+if(g.getCheckedRadioButtonId()==-1)
+{
+other.setError("Select gender");
+other.requestFocus();
+return false;
+}
+if(!c.isChecked())
+{
+c.setError("Please agree");
+c.requestFocus();
+return false;
+}
+return true;
+}
+}
